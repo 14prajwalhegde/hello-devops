@@ -1,0 +1,72 @@
+
+name: Deploy Hello DevOps
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hello-devops-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to local Docker
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        shell: powershell
+        run: |
+          docker build -t hello-devops:latest .
+          if ($LASTEXITCODE -ne 0) {
+            throw "Docker image build failed"
+          }
+
+      - name: Replace running container
+        shell: powershell
+        run: |
+          $existing = docker ps -a --format "{{.Names}}"
+          if ($existing -contains "hello-devops-demo") {
+            docker rm -f hello-devops-demo
+            if ($LASTEXITCODE -ne 0) {
+              throw "Could not remove the existing container"
+            }
+          }
+
+          docker run -d --name hello-devops-demo --restart unless-stopped -p 3000:3000 hello-devops:latest
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not start the new container"
+          }
+
+      - name: Verify deployment
+        shell: powershell
+        run: |
+          $healthy = $false
+
+          for ($i = 0; $i -lt 10; $i++) {
+            try {
+              $response = Invoke-RestMethod http://localhost:3000/health -TimeoutSec 3
+              if ($response.status -eq "healthy") {
+                $healthy = $true
+                break
+              }
+            } catch {
+              Start-Sleep -Seconds 2
+            }
+          }
+
+          if (-not $healthy) {
+            docker logs hello-devops-demo
+            throw "Deployment health check failed"
+          }
+
+          Write-Host "Deployment successful!"
+          Invoke-RestMethod http://localhost:3000/health
