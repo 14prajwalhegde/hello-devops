@@ -1,72 +1,76 @@
+
 export function handler(req, res) {
   res.setHeader("X-Content-Type-Options", "nosniff");
 
   if (req.url === "/health") {
-    res.writeHead(200, {
-      "Content-Type": "application/json"
-    });
-
-    res.end(JSON.stringify({
-      status: "healthy"
-    }));
-
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "healthy" }));
     return;
   }
 
   if (req.url === "/") {
-    res.writeHead(200, {
-      "Content-Type": "text/html; charset=utf-8"
-    });
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello DevOps</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 850px;
+            margin: 50px auto;
+            padding: 0 20px;
+            color: #172033;
+            line-height: 1.6;
+          }
+          h1 { color: #176b55; }
+          .pipeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin-top: 25px;
+          }
+          .stage {
+            padding: 18px;
+            border: 1px solid #d5e1e8;
+            border-radius: 10px;
+            background: #f5f9fb;
+          }
+          .stage h2 { font-size: 18px; }
+        </style>
+      </head>
+      <body>
+        <h1>Hello, DevOps!</h1>
+        <p>A small application demonstrating how code moves from development to deployment.</p>
 
-    res.end(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello DevOps</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #101827;
-      color: #f8fafc;
-      display: grid;
-      place-items: center;
-      min-height: 90vh;
-      margin: 0;
-    }
-    main {
-      max-width: 600px;
-      padding: 36px;
-      text-align: center;
-    }
-    h1 { color: #67e8f9; }
-    p { line-height: 1.7; color: #cbd5e1; }
-    code {
-      background: #263449;
-      padding: 5px 9px;
-      border-radius: 5px;
-    }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>Hello, DevOps!</h1>
-    <p>This application is built with Node.js.</p>
-    <p>Code changes. Tests run. Containers are built.</p>
-    <p>Change this message and watch the pipeline run.</p>
-    <p>Health check: <code>/health</code></p>
-  </main>
-</body>
-</html>`);
-
+        <h2>From Code to Deployment</h2>
+        <div class="pipeline">
+          <div class="stage">
+            <h2>1. Code</h2>
+            <p>Build a feature and commit your changes with Git.</p>
+          </div>
+          <div class="stage">
+            <h2>2. Test</h2>
+            <p>GitHub Actions runs automated tests on a pull request.</p>
+          </div>
+          <div class="stage">
+            <h2>3. Build</h2>
+            <p>Package the tested application into a Docker image.</p>
+          </div>
+          <div class="stage">
+            <h2>4. Deploy</h2>
+            <p>Run the updated application in a Docker container.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
     return;
   }
 
-  res.writeHead(404, {
-    "Content-Type": "application/json"
-  });
-
-  res.end(JSON.stringify({
-    error: "Not found"
-  }));
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ error: "Not found" }));
 }
