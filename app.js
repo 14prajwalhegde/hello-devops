@@ -47,6 +47,17 @@ export function handler(req, res) {
         <p>A small application demonstrating how code moves from development to deployment.</p>
 
         <h2>From Code to Deployment</h2>
+        <h2>What I Learned in DevOps</h2>
+<p>
+  You don't need to know everything before you start.
+  Learn continuously, experiment, and solve problems one step at a time.
+</p>
+<ul>
+  <li>Git and GitHub for collaboration</li>
+  <li>Automation to reduce repetitive work</li>
+  <li>Docker to package applications consistently</li>
+  <li>CI/CD to test and deliver changes reliably</li>
+</ul>
         <div class="pipeline">
           <div class="stage">
             <h2>1. Code</h2>
